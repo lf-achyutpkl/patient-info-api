@@ -38,6 +38,6 @@ export function createPatient(patient) {
     });
 }
 
-export function getAllPatients(){
+export function getAllPatients() {
   return Patient.fetchAll({ withRelated: ['annotations'] });
 }

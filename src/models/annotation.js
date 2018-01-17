@@ -11,8 +11,7 @@ let Annotation = bookshelf.Model.extend({
 
   hasTimestamps: true,
 
-
-  patient: function () {
+  patient: function() {
     return this.belongsTo(Patient, 'patient_id');
   }
 });
