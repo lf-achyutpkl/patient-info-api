@@ -4,20 +4,16 @@ import Annotation from './annotation';
 const TABLE_NAME = 'patients';
 
 /**
- * User model.
+ * Patient model.
  */
-class Patient extends bookshelf.Model {
-  get tableName() {
-    return TABLE_NAME;
-  }
+let Patient = bookshelf.Model.extend({
+  tableName: TABLE_NAME,
 
-  get hasTimestamps() {
-    return true;
-  }
+  hasTimestamps: true,
 
-  get annotations() {
+  annotations: function() {
     return this.hasMany(Annotation);
   }
-}
+});
 
 export default Patient;

@@ -37,3 +37,7 @@ export function createPatient(patient) {
       return patient;
     });
 }
+
+export function getAllPatients(){
+  return Patient.fetchAll({ withRelated: ['annotations'] });
+}

@@ -52,4 +52,11 @@ router.post('/', (req, res, next) => {
     .catch(err => next(err));
 });
 
+router.get('/', (req, res, next) => {
+  patientService
+    .getAllPatients()
+    .then(data => res.json(data))
+    .catch(err => next(err));
+});
+
 export default router;

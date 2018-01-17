@@ -36,6 +36,7 @@ app.use(json);
 
 // Everything in the public folder is served as static content
 app.use(express.static(path.join(__dirname, '/../public')));
+app.use(express.static(path.join(__dirname, '/../uploads')));
 
 // API Routes
 app.use('/api', routes);
