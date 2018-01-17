@@ -7,10 +7,10 @@ require('dotenv').config({ path: __dirname + '/../.env' });
 module.exports = {
   client: process.env.DB_CLIENT,
   connection: {
-    host : process.env.DB_HOST,
-    user : process.env.DB_USER,
-    password : process.env.DB_PASSEORD,
-    database : process.env.DB_NAME
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSEORD,
+    database: process.env.DB_NAME
   },
   useNullAsDefault: true,
   migrations: {

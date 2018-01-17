@@ -15,7 +15,7 @@ class Annotation extends bookshelf.Model {
     return true;
   }
 
-  get annotations(){
+  get annotations() {
     return this.belongsTo(Patient);
   }
 }

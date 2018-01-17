@@ -15,11 +15,8 @@ export function up(knex) {
     table.string('address');
     table.string('remarks');
 
-    table
-      .timestamp('created_at')
-      .notNullable();
+    table.timestamp('created_at').notNullable();
     table.timestamp('updated_at');
-
   });
 }
 

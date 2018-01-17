@@ -12,11 +12,12 @@ export function up(knex) {
     table.string('annotation_info');
     table.string('remarks');
 
-    table
-      .timestamp('created_at')
-      .notNullable();
+    table.timestamp('created_at').notNullable();
     table.timestamp('updated_at');
-    table.foreign('patient_id').references('id').on('patients');
+    table
+      .foreign('patient_id')
+      .references('id')
+      .on('patients');
   });
 }
 

@@ -15,7 +15,7 @@ class Patient extends bookshelf.Model {
     return true;
   }
 
-  get annotations(){
+  get annotations() {
     return this.hasMany(Annotation);
   }
 }
