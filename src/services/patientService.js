@@ -1,11 +1,5 @@
 import Patient from '../models/patient';
 import Annotation from '../models/annotation';
-const asdf = [
-  {
-    imageName: 'test',
-    annotationInfo: 'test'
-  }
-];
 
 export function createPatient(patient) {
   let annotations = patient.annotations;
@@ -38,6 +32,83 @@ export function createPatient(patient) {
     });
 }
 
-export function getAllPatients() {
-  return Patient.fetchAll({ withRelated: ['annotations'] });
+export function getAllPatients(queryParams) {
+  return Patient.fetchPage({
+      pageSize: queryParams.pageSize,
+      page: queryParams.page,
+      withRelated: ['annotations']
+    });
+}
+
+/**
+ * {
+ *    tags: [],
+ *    annotations: [
+ *      {
+ *         imageName: ...,
+ *         annotationInfo: ...,
+ *         fileInfo: {originalName: 54_right.png}
+ *      }
+ *    ]
+ * }
+ *
+ */
+export function saveBatchUpload(annotations){
+  let newPatientsCreated = {};
+
+  annotations.forEach(annotation => {
+    let [dummyPatientName, tag] = annotation.originalname.split('_');
+    tag = tag.split('.')[0];
+
+    console.log(newPatientsCreated)
+    console.log(dummyPatientName)
+    console.log(newPatientsCreated[dummyPatientName])
+    // if(newPatientsCreated[dummyPatientName]){
+    //   new Annotation({
+    //     patientId: newPatientsCreated[dummyPatientName],
+    //     imageName: annotation.filename,
+    //     remarks: tag
+    //   }).save().then(annotation => {
+    //     annotation.refresh();
+    //   });
+    // } else {
+      Patient.where('first_name', dummyPatientName).fetch().then(response => {
+        let patient = response === null ? newPatientsCreated[dummyPatientName] : response;
+        if(patient != null){
+          new Annotation({
+            patientId: patient.id,
+            imageName: annotation.filename,
+            remarks: tag
+          }).save().then(annotation => {
+            annotation.refresh();
+            console.log('yo ta aayo', dummyPatientName)
+            newPatientsCreated[dummyPatientName] = patient.id;
+            console.log(newPatientsCreated[dummyPatientName])
+          });
+        } else {
+          new Patient({
+            firstName: dummyPatientName,
+            lastName: dummyPatientName,
+            gender: 'male'
+          })
+            .save()
+            .then(patient => {
+              patient.refresh();
+              console.log('tala: ', newPatientsCreated[dummyPatientName])
+              newPatientsCreated[dummyPatientName] = patient.id;
+
+              new Annotation({
+                patientId: patient.id,
+                imageName: annotation.filename,
+                remarks: tag
+              }).save().then(annotation => {
+                annotation.refresh();
+              });
+            });
+        }
+      });
+    // }
+  });
+
+  // return;
 }

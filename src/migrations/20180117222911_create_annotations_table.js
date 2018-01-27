@@ -10,6 +10,7 @@ export function up(knex) {
     table.integer('patient_id').notNullable();
     table.string('image_name');
     table.string('annotation_info');
+    table.string('tags');
     table.string('remarks');
 
     table.timestamp('created_at').notNullable();
