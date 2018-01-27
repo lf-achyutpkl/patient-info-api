@@ -32,6 +32,6 @@ let _uploadConfig = multer({
   // ,fileFilter:
 });
 
-let upload = _uploadConfig.array('files', MAX_FILES_TO_UPLOAD)
+let upload = _uploadConfig.array('files', MAX_FILES_TO_UPLOAD);
 
 export default upload;

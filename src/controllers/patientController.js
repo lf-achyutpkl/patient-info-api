@@ -32,7 +32,7 @@ router.get('/', (req, res, next) => {
   let queryParams = qs.parse(req.url.split('?')[1]);
   patientService
     .getAllPatients(queryParams)
-    .then(data => res.json({data, pagination: data.pagination}))
+    .then(data => res.json({ data, pagination: data.pagination }))
     .catch(err => next(err));
 });
 
