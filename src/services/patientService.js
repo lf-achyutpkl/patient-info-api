@@ -1,6 +1,8 @@
 import Patient from '../models/patient';
 import Annotation from '../models/annotation';
 
+import fs from 'fs';
+
 export function createPatient(patient) {
   let annotations = patient.annotations;
 
@@ -53,68 +55,93 @@ export function getAllPatients(queryParams) {
  * }
  *
  */
-export function saveBatchUpload(annotations) {
+export function saveBatchUpload() {
+  return; // REMOVE THIS, only to aviod accidently uploading file
+
+  let files = [];
   let newPatientsCreated = {};
 
-  annotations.forEach(annotation => {
-    let [dummyPatientName, tag] = annotation.originalname.split('_');
+  fs.readdirSync('./uploads').forEach(file => {
+    // console.log(file);
+    files.push(file);
+  })
+
+  let count = 0;
+  while(count < files.length){
+    let fileName  = files[count];
+
+    let [dummyPatientName, tag] = fileName.split('_');
     tag = tag.split('.')[0];
 
-    console.log(newPatientsCreated);
-    console.log(dummyPatientName);
-    console.log(newPatientsCreated[dummyPatientName]);
-    // if(newPatientsCreated[dummyPatientName]){
-    //   new Annotation({
-    //     patientId: newPatientsCreated[dummyPatientName],
-    //     imageName: annotation.filename,
-    //     remarks: tag
-    //   }).save().then(annotation => {
-    //     annotation.refresh();
-    //   });
-    // } else {
-    Patient.where('first_name', dummyPatientName)
-      .fetch()
-      .then(response => {
-        let patient = response === null ? newPatientsCreated[dummyPatientName] : response;
-        if (patient != null) {
-          new Annotation({
-            patientId: patient.id,
-            imageName: annotation.filename,
-            remarks: tag
-          })
-            .save()
-            .then(annotation => {
-              annotation.refresh();
-              console.log('yo ta aayo', dummyPatientName);
-              newPatientsCreated[dummyPatientName] = patient.id;
-              console.log(newPatientsCreated[dummyPatientName]);
-            });
-        } else {
-          new Patient({
-            firstName: dummyPatientName,
-            lastName: dummyPatientName,
-            gender: 'male'
-          })
-            .save()
-            .then(patient => {
-              patient.refresh();
-              console.log('tala: ', newPatientsCreated[dummyPatientName]);
-              newPatientsCreated[dummyPatientName] = patient.id;
+    if(!newPatientsCreated[dummyPatientName]){
+      new Patient({
+        firstName: dummyPatientName,
+        lastName: dummyPatientName,
+        gender: 'male'
+      }).save().then(() => ++count);
+    }
+    // count++;
+  }
 
-              new Annotation({
-                patientId: patient.id,
-                imageName: annotation.filename,
-                remarks: tag
-              })
-                .save()
-                .then(annotation => {
-                  annotation.refresh();
-                });
-            });
-        }
-      });
-    // }
-  });
+  // annotations.forEach(annotation => {
+  //   let [dummyPatientName, tag] = annotation.originalname.split('_');
+  //   tag = tag.split('.')[0];
+
+  //   console.log(newPatientsCreated);
+  //   console.log(dummyPatientName);
+  //   console.log(newPatientsCreated[dummyPatientName]);
+  //   // if(newPatientsCreated[dummyPatientName]){
+  //   //   new Annotation({
+  //   //     patientId: newPatientsCreated[dummyPatientName],
+  //   //     imageName: annotation.filename,
+  //   //     remarks: tag
+  //   //   }).save().then(annotation => {
+  //   //     annotation.refresh();
+  //   //   });
+  //   // } else {
+  //   Patient.where('first_name', dummyPatientName)
+  //     .fetch()
+  //     .then(response => {
+  //       let patient = response === null ? newPatientsCreated[dummyPatientName] : response;
+  //       if (patient != null) {
+  //         new Annotation({
+  //           patientId: patient.id,
+  //           imageName: annotation.filename,
+  //           remarks: tag
+  //         })
+  //           .save()
+  //           .then(annotation => {
+  //             annotation.refresh();
+  //             console.log('yo ta aayo', dummyPatientName);
+  //             newPatientsCreated[dummyPatientName] = patient.id;
+  //             console.log(newPatientsCreated[dummyPatientName]);
+  //           });
+  //       } else {
+  //         new Patient({
+  //           firstName: dummyPatientName,
+  //           lastName: dummyPatientName,
+  //           gender: 'male'
+  //         })
+  //           .save()
+  //           .then(patient => {
+  //             patient.refresh();
+  //             console.log('tala: ', newPatientsCreated[dummyPatientName]);
+  //             newPatientsCreated[dummyPatientName] = patient.id;
+
+  //             new Annotation({
+  //               patientId: patient.id,
+  //               imageName: annotation.filename,
+  //               remarks: tag
+  //             })
+  //               .save()
+  //               .then(annotation => {
+  //                 annotation.refresh();
+  //               });
+  //           });
+  //       }
+  //     });
+  //   // }
+  // });
 
   // return;
 }

@@ -39,9 +39,9 @@ router.get('/', (req, res, next) => {
 /**
  * Batch upload
  */
-router.post('/batch-upload', upload, (req, res, next) => {
+router.get('/batch-upload', (req, res, next) => {
   patientService
-    .saveBatchUpload(res.req.files)
+    .saveBatchUpload()
     .then(() => res.status(HttpStatus.CREATED))
     .catch(err => next(err));
 });
