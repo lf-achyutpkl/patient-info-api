@@ -2,7 +2,7 @@ import Boom from 'boom';
 import Annotation from '../models/annotation';
 
 export function getAllAnnotation(queryParams) {
-  if (queryParams.annotation.toLowerCase() == 'true') {
+  if (!'true'.localeCompare(queryParams.annotation)) {
     return Annotation.query('where', 'annotation_info', '<>', '').fetchPage({
       pageSize: queryParams.pageSize,
       page: queryParams.page,
@@ -10,7 +10,7 @@ export function getAllAnnotation(queryParams) {
     });
   }
 
-  if (queryParams.annotation.toLowerCase() == 'false') {
+  if (!'false'.localeCompare(queryParams.annotation)) {
     return Annotation.query('where', 'annotation_info', '=', '').fetchPage({
       pageSize: queryParams.pageSize,
       page: queryParams.page,
@@ -32,5 +32,28 @@ export function getAnnotation(id) {
     }
 
     return annotation;
+  });
+}
+
+export function updateAnnotation(id, newAnnotation) {
+  return new Annotation({ id }).fetch().then(annotation => {
+    if (!annotation) {
+      throw new Boom.notFound('Annotation not found');
+    }
+
+    annotation.annotationInfo = newAnnotation.annotationInfo;
+    annotation.tags = newAnnotation.tags;
+    annotation.remarks = newAnnotation.remarks;
+
+    return new Annotation({ id })
+      .save(
+        {
+          annotationInfo: newAnnotation.annotationInfo,
+          tags: newAnnotation.tags,
+          remarks: newAnnotation.remarks
+        },
+        { patch: true }
+      )
+      .then(annotation => annotation.refresh());
   });
 }

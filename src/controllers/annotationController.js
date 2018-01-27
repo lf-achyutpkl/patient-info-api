@@ -21,8 +21,11 @@ router.get('/:id', (req, res, next) => {
     .catch(err => next(err));
 });
 
-// router.put('/annotations/:id', (req, res, next) => {
-//   annotationService.update()
-// });
+router.put('/:id', (req, res, next) => {
+  annotationService
+    .updateAnnotation(req.params.id, req.body)
+    .then(data => res.status(HttpStatus.OK).json({ data }))
+    .catch(err => next(err));
+});
 
 export default router;
