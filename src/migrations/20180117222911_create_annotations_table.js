@@ -9,7 +9,7 @@ export function up(knex) {
     table.increments('id');
     table.integer('patient_id').notNullable();
     table.string('image_name');
-    table.string('annotation_info');
+    table.text('annotation_info');
     table.string('tags');
     table.string('remarks');
 
