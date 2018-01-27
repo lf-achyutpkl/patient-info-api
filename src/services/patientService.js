@@ -64,21 +64,23 @@ export function saveBatchUpload() {
   fs.readdirSync('./uploads').forEach(file => {
     // console.log(file);
     files.push(file);
-  })
+  });
 
   let count = 0;
-  while(count < files.length){
-    let fileName  = files[count];
+  while (count < files.length) {
+    let fileName = files[count];
 
     let [dummyPatientName, tag] = fileName.split('_');
     tag = tag.split('.')[0];
 
-    if(!newPatientsCreated[dummyPatientName]){
+    if (!newPatientsCreated[dummyPatientName]) {
       new Patient({
         firstName: dummyPatientName,
         lastName: dummyPatientName,
         gender: 'male'
-      }).save().then(() => ++count);
+      })
+        .save()
+        .then(() => ++count);
     }
     // count++;
   }
