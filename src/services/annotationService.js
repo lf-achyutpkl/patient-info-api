@@ -27,6 +27,25 @@ export function getAllAnnotation(queryParams) {
       });
   }
 
+  if (queryParams.tagId > 0) {
+    return AnnotationsTags.where({ tag_id: queryParams.tagId })
+      .fetchAll()
+      .then(tags => {
+        let annotationIds = tags.map(tag => {
+          return tag.get('annotationId');
+        });
+
+        return Annotation.where({ user_id: queryParams.userId, is_reject: queryParams.isReject })
+          .where('id', 'in', annotationIds)
+          .orderBy('id', 'ASC')
+          .fetchPage({
+            pageSize: queryParams.pageSize,
+            page: queryParams.page,
+            withRelated: ['patient', 'tags']
+          });
+      });
+  }
+
   return Annotation.where({ user_id: queryParams.userId, is_reject: queryParams.isReject })
     .orderBy('id', 'ASC')
     .fetchPage({
