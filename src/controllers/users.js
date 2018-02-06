@@ -36,6 +36,16 @@ router.post('/', userValidator, (req, res, next) => {
 });
 
 /**
+ * POST /api/users
+ */
+router.post('/authenticate', (req, res, next) => {
+  userService
+    .authenticate(req.body.emailId, req.body.password)
+    .then(data => res.json({ data }))
+    .catch(err => next(err));
+});
+
+/**
  * PUT /api/users/:id
  */
 router.put('/:id', findUser, userValidator, (req, res, next) => {
