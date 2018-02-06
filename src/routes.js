@@ -3,6 +3,7 @@ import swaggerSpec from './utils/swagger';
 import usersController from './controllers/users';
 import patientController from './controllers/patientController';
 import annotationController from './controllers/annotationController';
+import tagsController from './controllers/tagsController';
 
 /**
  * Contains all API routes for the application.
@@ -63,5 +64,6 @@ router.get('/', (req, res) => {
 router.use('/users', usersController);
 router.use('/patients', patientController);
 router.use('/annotations', annotationController);
+router.use('/tags', tagsController);
 
 export default router;

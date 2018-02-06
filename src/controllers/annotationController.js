@@ -24,7 +24,9 @@ router.get('/:id', (req, res, next) => {
 router.put('/:id', (req, res, next) => {
   annotationService
     .updateAnnotation(req.params.id, req.body)
-    .then(data => res.status(HttpStatus.OK).json({ data }))
+    .then(data => {
+      res.status(HttpStatus.OK).json({ data });
+    })
     .catch(err => next(err));
 });
 

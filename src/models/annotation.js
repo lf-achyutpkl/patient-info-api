@@ -1,5 +1,6 @@
 import bookshelf from '../db';
 import Patient from './patient';
+import Tags from './tags';
 
 const TABLE_NAME = 'annotations';
 
@@ -13,6 +14,9 @@ let Annotation = bookshelf.Model.extend({
 
   patient: function() {
     return this.belongsTo(Patient, 'patient_id');
+  },
+  tags: function() {
+    return this.belongsToMany(Tags);
   }
 });
 
