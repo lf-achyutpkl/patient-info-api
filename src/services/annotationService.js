@@ -33,7 +33,7 @@ export function getAllAnnotation(queryParams) {
       if (!'false'.localeCompare(queryParams.annotation)) {
         return Annotation.where({ is_reject: queryParams.isReject })
           .where('id', 'in', annotationIds)
-          .query('where', 'annotation_info', '=', '')
+          .where('annotation_info', null)
           .orderBy('id', 'ASC')
           .fetchPage({
             pageSize: queryParams.pageSize,

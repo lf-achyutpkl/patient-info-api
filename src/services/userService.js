@@ -75,12 +75,12 @@ export function deleteUser(id) {
  * @param  {String}  password
  * @return {Promise}
  */
-export function authenticate(emailId, passsword) {
+export function authenticate(emailId, password) {
   return new Promise((resolve, reject) => {
     new User({ emailId: emailId }).fetch().then(user => {
       if (!user) {
         reject(new Boom.notFound('User not found'));
-      } else if (user.get('password') !== passsword) {
+      } else if (user.get('password') !== password) {
         reject(new Boom.notFound('Password does not match'));
       } else {
         let payload = {
