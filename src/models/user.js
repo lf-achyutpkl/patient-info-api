@@ -1,18 +1,25 @@
 import bookshelf from '../db';
+import Batches from './batches';
+import _ from 'lodash';
 
 const TABLE_NAME = 'users';
 
 /**
  * User model.
  */
-class User extends bookshelf.Model {
-  get tableName() {
-    return TABLE_NAME;
-  }
+let User = bookshelf.Model.extend({
+  tableName: TABLE_NAME,
+  hasTimestamps: true,
 
-  get hasTimestamps() {
-    return true;
+  permittedAttributes: ['id', 'name', 'emailId', 'roles'],
+
+  parse: function(attrs) {
+    return _.pick(attrs, this.permittedAttributes);
+  },
+
+  batches: function() {
+    return this.belongsToMany(Batches);
   }
-}
+});
 
 export default User;
