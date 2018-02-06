@@ -18,13 +18,23 @@ export function getAllUsers() {
  * @return {Promise}
  */
 export function getUser(id) {
-  return new User({ id }).fetch().then(user => {
-    if (!user) {
-      throw new Boom.notFound('User not found');
-    }
+  return new User({ id })
+    .fetch({
+      withRelated: [
+        {
+          batches: function(qb) {
+            qb.where('is_completed', 'false');
+          }
+        }
+      ]
+    })
+    .then(user => {
+      if (!user) {
+        throw new Boom.notFound('User not found');
+      }
 
-    return user;
-  });
+      return user;
+    });
 }
 
 /**

@@ -2,56 +2,74 @@ import Boom from 'boom';
 import Annotation from '../models/annotation';
 import AnnotationsTags from '../models/annotationsTags';
 import * as tagService from './tagService';
+import Batches from '../models/batches';
 import async from 'async';
 
 export function getAllAnnotation(queryParams) {
-  if (!'true'.localeCompare(queryParams.annotation)) {
-    return Annotation.where({ user_id: queryParams.userId, is_reject: queryParams.isReject })
-      .query('where', 'annotation_info', '<>', '')
-      .orderBy('id', 'ASC')
-      .fetchPage({
-        pageSize: queryParams.pageSize,
-        page: queryParams.page,
-        withRelated: ['patient', 'tags']
+  return Batches.where({ id: queryParams.batchId })
+    .fetch({
+      withRelated: ['annotations']
+    })
+    .then(batch => {
+      if (!batch) {
+        throw new Boom.notFound('Batch not found');
+      }
+      let annotationIds = batch.toJSON().annotations.map(annotation => {
+        return annotation.id;
       });
-  }
 
-  if (!'false'.localeCompare(queryParams.annotation)) {
-    return Annotation.where({ user_id: queryParams.userId, is_reject: queryParams.isReject })
-      .query('where', 'annotation_info', '=', '')
-      .orderBy('id', 'ASC')
-      .fetchPage({
-        pageSize: queryParams.pageSize,
-        page: queryParams.page,
-        withRelated: ['patient', 'tags']
-      });
-  }
-
-  if (queryParams.tagId > 0) {
-    return AnnotationsTags.where({ tag_id: queryParams.tagId })
-      .fetchAll()
-      .then(tags => {
-        let annotationIds = tags.map(tag => {
-          return tag.get('annotationId');
-        });
-
-        return Annotation.where({ user_id: queryParams.userId, is_reject: queryParams.isReject })
+      if (!'true'.localeCompare(queryParams.annotation)) {
+        return Annotation.where({ is_reject: queryParams.isReject })
           .where('id', 'in', annotationIds)
+          .query('where', 'annotation_info', '<>', '')
           .orderBy('id', 'ASC')
           .fetchPage({
             pageSize: queryParams.pageSize,
             page: queryParams.page,
             withRelated: ['patient', 'tags']
           });
-      });
-  }
+      }
 
-  return Annotation.where({ user_id: queryParams.userId, is_reject: queryParams.isReject })
-    .orderBy('id', 'ASC')
-    .fetchPage({
-      pageSize: queryParams.pageSize,
-      page: queryParams.page,
-      withRelated: ['patient', 'tags']
+      if (!'false'.localeCompare(queryParams.annotation)) {
+        return Annotation.where({ is_reject: queryParams.isReject })
+          .where('id', 'in', annotationIds)
+          .query('where', 'annotation_info', '=', '')
+          .orderBy('id', 'ASC')
+          .fetchPage({
+            pageSize: queryParams.pageSize,
+            page: queryParams.page,
+            withRelated: ['patient', 'tags']
+          });
+      }
+
+      if (queryParams.tagId > 0) {
+        return AnnotationsTags.where({ tag_id: queryParams.tagId })
+          .fetchAll()
+          .then(tags => {
+            let ids = tags.map(tag => {
+              return tag.get('annotationId');
+            });
+            let mergedAnnotationsIds = [...annotationIds, ...ids];
+
+            return Annotation.where({ is_reject: queryParams.isReject })
+              .where('id', 'in', mergedAnnotationsIds)
+              .orderBy('id', 'ASC')
+              .fetchPage({
+                pageSize: queryParams.pageSize,
+                page: queryParams.page,
+                withRelated: ['patient', 'tags']
+              });
+          });
+      }
+
+      return Annotation.where({ is_reject: queryParams.isReject })
+        .where('id', 'in', annotationIds)
+        .orderBy('id', 'ASC')
+        .fetchPage({
+          pageSize: queryParams.pageSize,
+          page: queryParams.page,
+          withRelated: ['patient', 'tags']
+        });
     });
 }
 
