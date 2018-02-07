@@ -30,5 +30,5 @@ export function up(knex) {
  * @return {Promise}
  */
 export function down(knex) {
-  return knex.schema.dropTable('batches_annotations');
+  return knex.schema.dropTable('annotations_batches');
 }
