@@ -40,8 +40,8 @@ export function getAllAnnotation(queryParams) {
       }
 
       if (!'true'.localeCompare(queryParams.annotation)) {
-        return Annotation.where({ is_reject: queryParams.isReject })
-          .where('id', 'in', annotationIds)
+        return Annotation.where('id', 'in', annotationIds)
+          .where({ is_reject: queryParams.isReject })
           .query('where', 'annotation_info', '<>', '')
           .orderBy('id', 'ASC')
           .fetchPage({
@@ -52,8 +52,8 @@ export function getAllAnnotation(queryParams) {
       }
 
       if (!'false'.localeCompare(queryParams.annotation)) {
-        return Annotation.where({ is_reject: queryParams.isReject })
-          .where('id', 'in', annotationIds)
+        return Annotation.where('id', 'in', annotationIds)
+          .where({ is_reject: queryParams.isReject })
           .where('annotation_info', null)
           .orderBy('id', 'ASC')
           .fetchPage({
@@ -63,8 +63,8 @@ export function getAllAnnotation(queryParams) {
           });
       }
 
-      return Annotation.where({ is_reject: queryParams.isReject })
-        .where('id', 'in', annotationIds)
+      return Annotation.where('id', 'in', annotationIds)
+        .where({ is_reject: queryParams.isReject })
         .orderBy('id', 'ASC')
         .fetchPage({
           pageSize: queryParams.pageSize,
@@ -90,17 +90,14 @@ export function updateAnnotation(id, newAnnotation) {
       if (!annotation) {
         throw new Boom.notFound('Annotation not found');
       }
-
       annotation.annotationInfo = newAnnotation.annotationInfo;
-      annotation.tags = newAnnotation.tags;
       annotation.remarks = newAnnotation.remarks;
       annotation.isReject = newAnnotation.isReject;
-
       async.eachLimit(
         newAnnotation.tags,
         1,
         function(tag, callback) {
-          if (tag.id === 0) {
+          if (tag.id === 0 || tag.id === '0') {
             tagService.createTag({ tagName: tag.tagName }).then(newtag => {
               new AnnotationsTags({ tag_id: newtag.id, annotation_id: id }).save().then(() => {
                 callback();
