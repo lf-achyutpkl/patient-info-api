@@ -13,7 +13,6 @@ export function up(knex) {
     table.string('tags');
     table.string('remarks');
     table.integer('user_id');
-    table.boolean('is_reject');
 
     table.timestamp('created_at').notNullable();
     table.timestamp('updated_at');

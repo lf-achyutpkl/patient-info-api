@@ -30,5 +30,5 @@ export function up(knex) {
  * @return {Promise}
  */
 export function down(knex) {
-  return knex.schema.dropTable('users_batches');
+  return knex.schema.dropTable('batches_users');
 }
