@@ -17,6 +17,27 @@ export function getAllAnnotation(queryParams) {
       let annotationIds = batch.toJSON().annotations.map(annotation => {
         return annotation.id;
       });
+      if (queryParams.tagId > 0) {
+        return AnnotationsTags.where({ tag_id: queryParams.tagId })
+          .fetchAll()
+          .then(tags => {
+            let annotationIdsWithTag = tags.map(tag => {
+              return tag.get('annotationId');
+            });
+            let intersectionAnnotationIds = [annotationIds, annotationIdsWithTag].reduce((a, b) =>
+              a.filter(c => b.includes(c))
+            );
+
+            return Annotation.where({ is_reject: queryParams.isReject })
+              .where('id', 'in', intersectionAnnotationIds)
+              .orderBy('id', 'ASC')
+              .fetchPage({
+                pageSize: queryParams.pageSize,
+                page: queryParams.page,
+                withRelated: ['patient', 'tags']
+              });
+          });
+      }
 
       if (!'true'.localeCompare(queryParams.annotation)) {
         return Annotation.where({ is_reject: queryParams.isReject })
@@ -39,26 +60,6 @@ export function getAllAnnotation(queryParams) {
             pageSize: queryParams.pageSize,
             page: queryParams.page,
             withRelated: ['patient', 'tags']
-          });
-      }
-
-      if (queryParams.tagId > 0) {
-        return AnnotationsTags.where({ tag_id: queryParams.tagId })
-          .fetchAll()
-          .then(tags => {
-            let ids = tags.map(tag => {
-              return tag.get('annotationId');
-            });
-            let mergedAnnotationsIds = [...annotationIds, ...ids];
-
-            return Annotation.where({ is_reject: queryParams.isReject })
-              .where('id', 'in', mergedAnnotationsIds)
-              .orderBy('id', 'ASC')
-              .fetchPage({
-                pageSize: queryParams.pageSize,
-                page: queryParams.page,
-                withRelated: ['patient', 'tags']
-              });
           });
       }
 
