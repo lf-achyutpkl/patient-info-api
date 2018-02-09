@@ -10,7 +10,7 @@ const TABLE_NAME = 'users';
 let User = bookshelf.Model.extend({
   tableName: TABLE_NAME,
   hasTimestamps: true,
-
+  hidden: ['password'],
   // permittedAttributes: ['id', 'name', 'emailId', 'roles'],
 
   // parse: function(attrs) {

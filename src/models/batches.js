@@ -1,5 +1,6 @@
 import bookshelf from '../db';
 import Annotation from './annotation';
+import User from './user';
 
 const TABLE_NAME = 'batches';
 
@@ -11,6 +12,9 @@ let Batches = bookshelf.Model.extend({
   hasTimestamps: false,
   annotations: function() {
     return this.belongsToMany(Annotation);
+  },
+  users: function() {
+    return this.belongsToMany(User);
   }
 });
 

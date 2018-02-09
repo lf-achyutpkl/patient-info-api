@@ -20,13 +20,7 @@ export function getAllUsers() {
 export function getUser(id) {
   return new User({ id })
     .fetch({
-      withRelated: [
-        {
-          batches: function(qb) {
-            qb.where('is_completed', 'false');
-          }
-        }
-      ]
+      withRelated: ['batches']
     })
     .then(user => {
       if (!user) {
@@ -83,12 +77,7 @@ export function authenticate(emailId, password) {
       } else if (user.get('password') !== password) {
         reject(new Boom.notFound('Password does not match'));
       } else {
-        let payload = {
-          id: user.get('id'),
-          name: user.get('name'),
-          email: user.get('emailId')
-        };
-        let token = jwt.sign(payload, 'secretKey', {
+        let token = jwt.sign(user.toJSON(), 'secretKey', {
           expiresIn: '1d' // expires in 24 hours
         });
         resolve(token);
