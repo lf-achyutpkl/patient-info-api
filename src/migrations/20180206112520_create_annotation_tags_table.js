@@ -3,7 +3,7 @@
  * @return {Promise}
  */
 export function up(knex) {
-  return knex.schema.createTable('annotation_tags', table => {
+  return knex.schema.createTable('annotations_tags', table => {
     table.increments('id');
     table.integer('tag_id');
     table.integer('annotation_id');
@@ -28,5 +28,5 @@ export function up(knex) {
  * @return {Promise}
  */
 export function down(knex) {
-  return knex.schema.dropTable('annotation_tags');
+  return knex.schema.dropTable('annotations_tags');
 }
