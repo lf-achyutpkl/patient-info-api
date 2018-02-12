@@ -92,7 +92,6 @@ export async function saveBatchUpload() {
         });
     }
 
-
     let tagObj = await new Tags({ tagName: tag }).fetch();
 
     if (!tagObj) {
