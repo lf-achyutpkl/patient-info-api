@@ -1,5 +1,6 @@
 import Boom from 'boom';
 import User from '../models/user';
+import jwt from 'jsonwebtoken';
 
 /**
  * Get all users.
@@ -17,13 +18,17 @@ export function getAllUsers() {
  * @return {Promise}
  */
 export function getUser(id) {
-  return new User({ id }).fetch().then(user => {
-    if (!user) {
-      throw new Boom.notFound('User not found');
-    }
+  return new User({ id })
+    .fetch({
+      withRelated: ['batches']
+    })
+    .then(user => {
+      if (!user) {
+        throw new Boom.notFound('User not found');
+      }
 
-    return user;
-  });
+      return user;
+    });
 }
 
 /**
@@ -55,4 +60,28 @@ export function updateUser(id, user) {
  */
 export function deleteUser(id) {
   return new User({ id }).fetch().then(user => user.destroy());
+}
+
+/**
+ * Authenticate a user.
+ *
+ * @param  {String}  email_id
+ * @param  {String}  password
+ * @return {Promise}
+ */
+export function authenticate(emailId, password) {
+  return new Promise((resolve, reject) => {
+    new User({ emailId: emailId }).fetch().then(user => {
+      if (!user) {
+        reject(new Boom.notFound('User not found'));
+      } else if (user.get('password') !== password) {
+        reject(new Boom.notFound('Password does not match'));
+      } else {
+        let token = jwt.sign(user.toJSON(), 'secretKey', {
+          expiresIn: '1d' // expires in 24 hours
+        });
+        resolve(token);
+      }
+    });
+  });
 }

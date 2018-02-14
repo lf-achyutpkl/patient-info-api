@@ -12,6 +12,7 @@ import bodyParser from 'body-parser';
 import compression from 'compression';
 import json from './middlewares/json';
 import * as errorHandler from './middlewares/errorHandler';
+import auth from './middlewares/auth';
 
 const app = express();
 
@@ -39,7 +40,7 @@ app.use(express.static(path.join(__dirname, '/../public')));
 app.use(express.static(path.join(__dirname, '/../uploads')));
 
 // API Routes
-app.use('/api', routes);
+app.use('/api', auth, routes);
 
 // Error Middlewares
 app.use(errorHandler.genericErrorHandler);

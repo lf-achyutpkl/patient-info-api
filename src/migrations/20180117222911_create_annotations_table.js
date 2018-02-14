@@ -12,6 +12,7 @@ export function up(knex) {
     table.text('annotation_info');
     table.string('tags');
     table.string('remarks');
+    table.integer('user_id');
 
     table.timestamp('created_at').notNullable();
     table.timestamp('updated_at');

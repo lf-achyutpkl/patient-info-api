@@ -40,10 +40,10 @@ router.get('/', (req, res, next) => {
  * Batch upload
  */
 router.get('/batch-upload', (req, res, next) => {
-  patientService
-    .saveBatchUpload()
-    .then(() => res.status(HttpStatus.CREATED))
-    .catch(err => next(err));
+  patientService.saveBatchUpload();
+  // .then(() => res.status(HttpStatus.CREATED))
+  // .catch(err => next(err));
+  res.json('Batch Upload Completed');
 });
 
 export default router;
