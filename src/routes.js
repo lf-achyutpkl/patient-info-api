@@ -5,6 +5,7 @@ import patientController from './controllers/patientController';
 import annotationController from './controllers/annotationController';
 import tagsController from './controllers/tagsController';
 import batchesController from './controllers/batchController';
+import diagnosisController from './controllers/diagnosisController';
 
 /**
  * Contains all API routes for the application.
@@ -67,5 +68,6 @@ router.use('/patients', patientController);
 router.use('/annotations', annotationController);
 router.use('/tags', tagsController);
 router.use('/batches', batchesController);
+router.use('/diagnosis', diagnosisController);
 
 export default router;
