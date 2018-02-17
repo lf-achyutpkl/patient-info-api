@@ -5,6 +5,7 @@ import AnnotationTags from '../models/annotationsTags';
 import AnnotationBatches from '../models/annotationsBatches';
 import Batches from '../models/batches';
 import fs from 'fs';
+const queue = null;
 
 export function createPatient(patient) {
   let annotations = patient.annotations;
@@ -61,19 +62,11 @@ export function getAllPatients(queryParams) {
 export async function saveBatchUpload() {
   // return; // REMOVE THIS, only to aviod accidently uploading file
   let files = [];
-  let batchLimit = 8;
-
-  fs.readdirSync('./uploads').forEach(file => {
-    if (file.includes('_')) {
-      files.push(file);
-    }
-  });
-
+  let batchLimit = 350;
   let count = 0;
-  while (count < files.length) {
-    let fileName = files[count];
 
-    let [dummyPatientName, tag] = fileName.split('_');
+  let q = queue(async (file, cb) => {
+    let [dummyPatientName, tag] = file.split('_');
     tag = tag.split('.')[0];
 
     let patient = await new Patient({ firstName: dummyPatientName }).fetch();
@@ -82,7 +75,7 @@ export async function saveBatchUpload() {
       patient = await new Patient({
         firstName: dummyPatientName.trim(),
         lastName: dummyPatientName,
-        gender: 'male'
+        gender: 'female'
       })
         .save()
         .then(patient => {
@@ -106,7 +99,7 @@ export async function saveBatchUpload() {
         });
     }
 
-    let batchName = 'batch ' + Math.ceil((count + 1) / batchLimit);
+    let batchName = 'Kaggle Batch - ' + Math.ceil((count + 1) / batchLimit);
 
     let batchesObj = await new Batches({ batchName: batchName.trim() }).fetch();
     if (!batchesObj) {
@@ -124,7 +117,7 @@ export async function saveBatchUpload() {
 
     let annotation = await new Annotation({
       patientId: patient.id,
-      imageName: fileName,
+      imageName: file,
       remarks: tag
     })
       .save()
@@ -143,8 +136,22 @@ export async function saveBatchUpload() {
       batchId: batchesObj.id,
       annotationId: annotation.id
     }).save();
+    // console.log('finished processing ', file);
     count++;
-  }
+    cb();
+  }, 1);
+
+  fs.readdirSync('./uploads').forEach(file => {
+    if (file.includes('_')) {
+      files.push(file);
+    }
+  });
+
+  q.push(files);
+
+  q.drain = function() {
+    // console.log('all images uploaded');
+  };
 
   return;
 }
