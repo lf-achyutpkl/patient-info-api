@@ -6,5 +6,5 @@ import AnnotationLabels from '../models/annotationLabels';
  * @return {Promise}
  */
 export function getLabelByType(type) {
-  return new AnnotationLabels({ labelType: type }).fetchAll();
+  return AnnotationLabels.where({ label_type: type }).fetchAll();
 }
