@@ -17,10 +17,36 @@ export function getBatch(id) {
 }
 
 export function getAllBatch(queryParams) {
-  return Batches.fetchPage({
-    pageSize: queryParams.pageSize,
-    page: queryParams.page,
-    withRelated: ['users']
+  return BatchesUsers.fetchAll().then(users => {
+    let assignedBatchIds = users.map(user => {
+      return user.get('batchId');
+    });
+
+    if (queryParams.filterId === 0) {
+      return Batches.where('id', '>', '0')
+        .orderBy('id', 'ASC')
+        .fetchPage({
+          pageSize: queryParams.pageSize,
+          page: queryParams.page,
+          withRelated: ['users']
+        });
+    } else if (queryParams.filterId === 1) {
+      return Batches.where('id', 'in', assignedBatchIds)
+        .orderBy('id', 'ASC')
+        .fetchPage({
+          pageSize: queryParams.pageSize,
+          page: queryParams.page,
+          withRelated: ['users']
+        });
+    } else {
+      return Batches.where('id', 'not in', assignedBatchIds)
+        .orderBy('id', 'ASC')
+        .fetchPage({
+          pageSize: queryParams.pageSize,
+          page: queryParams.page,
+          withRelated: ['users']
+        });
+    }
   });
 }
 
