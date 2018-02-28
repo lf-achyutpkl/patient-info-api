@@ -5,7 +5,7 @@ import AnnotationTags from '../models/annotationsTags';
 import AnnotationBatches from '../models/annotationsBatches';
 import Batches from '../models/batches';
 import fs from 'fs';
-const queue = null;
+import queue from 'async/queue';
 
 export function createPatient(patient) {
   let annotations = patient.annotations;
