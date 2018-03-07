@@ -22,7 +22,7 @@ export function getAllBatch(queryParams) {
       return user.get('batchId');
     });
 
-    if (queryParams.filterId === 0) {
+    if (parseInt(queryParams.filterId) === 0) {
       return Batches.where('id', '>', '0')
         .orderBy('id', 'ASC')
         .fetchPage({
@@ -30,7 +30,7 @@ export function getAllBatch(queryParams) {
           page: queryParams.page,
           withRelated: ['users']
         });
-    } else if (queryParams.filterId === 1) {
+    } else if (parseInt(queryParams.filterId) === 1) {
       return Batches.where('id', 'in', assignedBatchIds)
         .orderBy('id', 'ASC')
         .fetchPage({
