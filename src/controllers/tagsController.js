@@ -24,4 +24,14 @@ router.post('/', (req, res, next) => {
     .catch(err => next(err));
 });
 
+/**
+ * Delete /api/users
+ */
+router.delete('/:tagId/:imageId', (req, res, next) => {
+  tagService
+    .deleteTagForImage(req.params.tagId, req.params.imageId)
+    .then(() => res.status(HttpStatus.OK).json({ data: 'success' }))
+    .catch(err => next(err));
+});
+
 export default router;
