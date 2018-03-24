@@ -41,6 +41,9 @@ app.use(express.static(path.join(__dirname, '/../uploads')));
 
 // API Routes
 app.use('/api', auth, routes);
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '/../public', 'index.html'));
+});
 
 // Error Middlewares
 app.use(errorHandler.genericErrorHandler);
