@@ -78,7 +78,7 @@ export function authenticate(emailId, password) {
         reject(new Boom.notFound('Password does not match'));
       } else {
         let token = jwt.sign(user.toJSON(), 'secretKey', {
-          expiresIn: '1d' // expires in 24 hours
+          expiresIn: '7d' // expires in 7 days
         });
         resolve(token);
       }
